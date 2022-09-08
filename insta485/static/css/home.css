@@ -1,0 +1,81 @@
+main
+{  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 80%;
+    /* padding: 0px 100px; */
+    margin: auto;
+    /* border: 5px solid; */
+}
+.card
+{
+    width: 500px;
+    border: 2px solid;
+    border-color: #B8B8B8;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.cardHeader
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+.user
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+.timestamp
+{
+    font-size: small;
+    text-decoration: none;
+    color: black;
+    
+}
+.cardHeader a:visited
+{
+    color:inherit;
+}
+
+.cardHeader img
+{
+    width: 30px;
+    margin-right: 10px;
+}
+.card > img
+{
+    width: 100%;
+}
+.cardComments
+{
+    padding: 10px 5px;
+}
+.likes
+{
+    margin-bottom: 5px;
+}
+.comments p
+{
+    padding: 5px 0;
+}
+.comments a
+{
+    display: inline-block;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 5px;
+    color: black;
+}
+.comments a:visited
+{
+    color:inherit;
+}
+

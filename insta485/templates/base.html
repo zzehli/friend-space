@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>insta485</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='/css/nav.css')}}">
+    {% block stylesheet %}{% endblock %}
+</head>
+<body>
+    <nav>
+        <a href="/">
+            <img src= "{{url_for('static', filename='/images/logo.png')}}" alt="inst logo" style="width:42px;height:42px;">
+        </a>
+        <ul><li>
+                <a href="/explore/">explore</a>
+            </li><li>
+                <a href="/users/{{session['user']}}">{{session['user']}}</a>
+            </li>
+        </ul>
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
+
+
+

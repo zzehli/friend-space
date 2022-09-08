@@ -1,0 +1,52 @@
+main
+{  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* padding: 0px 100px; */
+    max-width: 500px;
+    margin: auto;
+    /* border: 5px solid; */
+}
+
+main h2
+{   
+    width: 100%;
+    margin-bottom: 30px;
+    /* text-align: left; */
+}
+
+.followers
+{
+    position: relative;
+    width: 100%
+}
+
+.followers div
+{   
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border: 2px solid;
+    border-color: #B8B8B8;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.followers a
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+.followers a img
+{
+    width: 30px;
+    margin-right: 10px;
+}

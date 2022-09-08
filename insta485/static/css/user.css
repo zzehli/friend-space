@@ -1,0 +1,54 @@
+main
+{  
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0px 100px;
+    margin: auto
+}
+
+main a
+{
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+main a:visited
+{
+    color:inherit;
+}
+
+.userInfo h2
+{
+    margin-bottom: 15px;
+}
+
+.userInfo p
+{
+    margin-bottom: 15px;
+}
+
+/* https://blog.logrocket.com/how-create-responsive-image-gallery-css-flexbox/ */
+.posts ul
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    justify-content: center;
+}
+
+.posts li
+{
+    flex-basis: 230px;
+}
+
+.posts li img
+{
+    width: 100%;
+}
+
+
+

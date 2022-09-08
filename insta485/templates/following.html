@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{url_for('static', filename='/css/followers.css')}}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <h2>
+        Following
+    </h2>
+    <div class="followers">
+        {% for p in following %}
+            <div>
+                <a href = "/users/{{p.username}}/">
+                    <img src="/uploads/{{p.filename}}">
+                    <p>{{p.username}}</p>
+                </a>
+                <p>
+                    {% if p.logname_follows_username %}
+                        following
+                        <!-- TODO -->
+                        <form action="/following/?target=/users/{{username}}/" method="post" enctype="multipart/form-data">
+                            <input type="submit" name="unfollow" value="unfollow"/>
+                            <input type="hidden" name="username" value="{{username}}"/>
+                            <input type="hidden" name="operation" value="unfollow"/>
+                        </form>
+                    {% elif p.username == logname %}
+                    {% else %}
+                        not following
+                        <form action="/following/?target=/users/{{username}}/" method="post" enctype="multipart/form-data">
+                            <input type="submit" name="follow" value="follow"/>
+                            <input type="hidden" name="username" value="{{username}}"/>
+                            <input type="hidden" name="operation" value="follow"/>
+                        </form>
+                    {% endif %}
+                </p>
+            </div>
+        {% endfor%}
+    </div>
+</main>
+{% endblock %}

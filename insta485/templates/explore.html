@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{url_for('static', filename='/css/followers.css')}}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <h2>
+        Discover People
+    </h2>
+    <div class="followers">
+        {% for p in not_following %}
+            <div>
+                <a href = "/users/{{p.username}}/">
+                    <img src="/uploads/{{p.filename}}">
+                    <p>{{p.username}}</p>
+                </a>
+                <form action="{{url_for('post_follow', target = url_for('explore'))}}" method="post" enctype="multipart/form-data">
+                    <input type="submit" name="follow" value="follow"/>
+                    <input type="hidden" name="username" value="{{p.username}}"/>
+                    <input type="hidden" name="operation" value="follow"/>
+                </form>
+            </div>
+        {% endfor%}
+    </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{url_for('static', filename='/css/login.css')}}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class = "user_info">
+        <img src="/uploads/{{filename}}">
+        {{session.user}}
+    </div>
+    <!-- TODO -->
+    <form action="{{url_for('account', target = url_for('index'))}}" method="post" enctype="multipart/form-data">
+        <p>
+            <label for="photo">Photo</label> 
+            <input type="file" id = "photo" name="file" required/>
+        </p>
+
+        <p>
+            <label for="fullname">Name</label> 
+            <input type="text" id = "fullname" name="fullname" value = "{{fullname}}" required/>
+        </p>
+
+        <p>
+            <label for="email">Email</label> 
+            <input type="text" id = "email" name="email" value="{{email}}" required/>
+        </p>
+        
+        <p>
+            <label for="update"></label>
+            <input type="submit" id = "update" name="update" value="Submit"/>
+        </p>
+            <input type="hidden" name="operation" value="edit_account"/>
+    </form>
+    <div>
+        <h4><a href = "/accounts/password/">Change Password</a></h3>
+        <h4><a href = "/accounts/delete/">Delete Account</a></h3>
+
+    </div>
+</main>
+{% endblock %}

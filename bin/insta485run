@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#call insta485db create if no database
+#set FLASK_ENV and FLASK_APP
+#run the server
+
+set -x
+
+FILE= var/insta485.sqlite3
+if test ! -f "$FILE" ;
+then
+    ./bin/insta485db reset
+fi
+
+export FLASK_ENV=development
+export FLASK_APP=insta485
+flask run --host 0.0.0.0 --port 8000

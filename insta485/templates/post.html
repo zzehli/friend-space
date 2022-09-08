@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{url_for('static', filename='/css/post.css')}}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class = "post">
+        <img src = "{{url_for('image', file = img_url)}}">
+        <div class = "postInfo">
+            <div class = "postHeader">
+                <a href = "{{url_for('user', user_url_slug = owner)}}">
+                    <img src="{{url_for('image', file = owner_img_url)}}">
+                    <p>{{owner}}</p>
+                </a>
+                <p>
+                    {{timestamp}}
+                </p>
+            </div>
+            <ul class = "comments">
+                {% for comment in comments %}
+                <li>
+                    <div><a href = "{{url_for('user', user_url_slug = comment.owner)}}">{{comment.owner}}</a>
+                        {{comment.text}}
+                    {% if comment.owner == session['user'] %}
+                    <form action="{{url_for('post_comments', target = url_for('post', postid_url_slug = postid))}}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="operation" value="delete"/>
+                        <input type="hidden" name="commentid" value="{{comment.commentid}}"/>
+                        <input type="submit" name="uncomment" value="delete comment"/>
+                    </form>                
+                    </div>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+            {% if liked == 0 %}
+            <form action="{{url_for('post_likes', target = url_for('index'))}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="like"/>
+                <input type="hidden" name="postid" value="{{postid}}"/>
+                <input type="submit" name="like" value="like"/>
+            </form>
+            {% else %}
+            <form action="{{url_for('post_likes', target = url_for('index'))}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="unlike"/>
+                <input type="hidden" name="postid" value="{{postid}}"/>
+                <input type="submit" name="like" value="unlike"/>
+            </form>
+            {%endif%}
+            <form action="{{url_for('post_comments', target = url_for('post', postid_url_slug = postid))}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="create"/>
+                <input type="hidden" name="postid" value="{{postid}}"/>
+                <input type="text" name="text" required/>
+                <input type="submit" name="comment" value="comment"/>
+            </form>
+            {% set logged_user = session['user']%}
+            {% if owner == logged_user %}
+                <form action="{{url_for('post_posts', target = url_for('user', user_url_slug = logged_user))}}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="operation" value="delete"/>
+                    <input type="hidden" name="postid" value="{{postid}}"/>
+                    <input type="submit" name="delete" value="delete post"/>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock %}
