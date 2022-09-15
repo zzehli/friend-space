@@ -3,20 +3,17 @@ from multiprocessing import context
 import flask
 import insta485
 import sqlite3
-from insta485.api.custom_error import InvalidCredential
+from insta485.api.custom_error import CustomError
 from insta485.api.util import password_hash
 
-#custom error handling
-@insta485.app.errorhandler(InvalidCredential)
-def invalid_credential(e):
-  return flask.jsonify(e.to_dict()), e.status_code
-
-@insta485.app.route('/api/v1/posts/')
-def get_posts():
-
-  #check permission/authentication
-  error = None
+def check_permission():
+  """
+  Check login information through request or session, return logged in username
+  if authorization succeeds
+  """
   if 'user' not in flask.session:
+    if flask.request.authorization == None:
+      raise CustomError("Forbidden", status_code=403)
 
     username = flask.request.authorization['username']
     password = flask.request.authorization['password']
@@ -39,12 +36,24 @@ def get_posts():
     password_atempt = password_hash(pwd_fetch['password'].split('$')[1],password)
 
     if pwd_fetch['password'] != password_atempt:
-      raise InvalidCredential("Forbidden")
+      raise CustomError("Forbidden", 403)
   else:
     username = flask.session['user']
-  #TODO get posts (by logged in user or users they follow) info from DB
+  
+  return username
 
-  #TODO handle query string: page, postid_lte, size
+#custom error handling
+@insta485.app.errorhandler(CustomError)
+def invalid_credential(e):
+  return flask.jsonify(e.to_dict())
+
+@insta485.app.route('/api/v1/posts/')
+def api_get_posts():
+
+  #check permission/authentication
+  error = None
+  username = check_permission()
+
   lte = flask.request.args.get('postid_lte')
   size = flask.request.args.get('size', default=10, type = int)
   page = flask.request.args.get('page', default=1, type = int)
@@ -55,19 +64,40 @@ def get_posts():
           cur = connection.execute(
           "SELECT posts.postid \
           FROM posts \
-          WHERE postid <= :lte \
           INNER JOIN (SELECT DISTINCT username2 \
               FROM following \
               WHERE username1 = :user OR username2 = :user) AS f \
           ON posts.owner = f.username2 \
+          WHERE posts.postid <= :lte \
+          ORDER BY posts.postid DESC \
           LIMIT :limit OFFSET :offset", {"lte": lte,
                                          "user": username,
                                          "limit": size,
-                                         "offset": (page-1) * size - 1}
+                                         "offset": (page-1) * size }
           )
           postid_fetch = cur.fetchall()
-          
-          
+
+          cur = connection.execute(
+          "SELECT posts.postid \
+          FROM posts \
+          INNER JOIN (SELECT DISTINCT username2 \
+              FROM following \
+              WHERE username1 = :user OR username2 = :user) AS f \
+          ON posts.owner = f.username2 \
+          WHERE posts.postid <= :lte \
+          ORDER BY posts.postid DESC \
+          LIMIT :limit OFFSET :offset", {"lte": lte,
+                                         "user": username,
+                                         "limit": size,
+                                         "offset": page * size }
+          )
+          next_fetch = cur.fetchall()
+          print(next_fetch)
+          next = True if len(next_fetch) > 0 else False
+          if next == True:
+            next_url = flask.url_for('api_get_posts', postid_lte = lte, page = page + 1, size = size)
+          else:
+            next_url = ""
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e 
@@ -86,7 +116,25 @@ def get_posts():
                                          "offset": (page-1) * size }
           )
           postid_fetch = cur.fetchall()
-          
+
+          cur = connection.execute(
+          "SELECT posts.postid \
+          FROM posts \
+          INNER JOIN (SELECT DISTINCT username2 \
+              FROM following \
+              WHERE username1 = :user OR username2 = :user) AS f \
+          ON posts.owner = f.username2 \
+          ORDER BY posts.postid DESC \
+          LIMIT :limit OFFSET :offset", {"user": username,
+                                         "limit": size,
+                                         "offset": page * size }
+          )
+          next_fetch = cur.fetchall()
+          next = True if len(next_fetch) > 0 else False
+          if next == True:
+            next_url = flask.url_for('api_get_posts', page = page + 1, size = size)
+          else:
+            next_url = ""          
           
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
@@ -96,55 +144,108 @@ def get_posts():
     id = p['postid']
     p['url'] = '/api/v1/posts/' + str(id) + '/'
   
-  print(postid_fetch)
   insta485.model.close_db(error)
 
 
- 
   context = {
-  "next": "",
-  "results": [
-      {
-        "postid": 3,
-        "url": "/api/v1/posts/3/"
-      },
-      {
-        "postid": 2,
-        "url": "/api/v1/posts/2/"
-      },
-      {
-        "postid": 1,
-        "url": "/api/v1/posts/1/"
-      }
-    ],
-    "url": "/api/v1/posts/"
+  "next": next_url,
+  "results": postid_fetch,
+    "url": flask.request.path
   }
   return flask.jsonify(**context)
 
 @insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
-def get_post(postid_url_slug):
-    """Return post on postid.
-    Example:
-    {
-      "created": "2017-09-28 04:33:28",
-      "imgUrl": "/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg",
-      "owner": "awdeorio",
-      "ownerImgUrl": "/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg",
-      "ownerShowUrl": "/users/awdeorio/",
-      "postShowUrl": "/posts/1/",
-      "url": "/api/v1/posts/1/"
-    }
-    """
-    context = {
-        "created": "2017-09-28 04:33:28",
-        "imgUrl": "/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg",
-        "owner": "awdeorio",
-        "ownerImgUrl": "/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg",
-        "ownerShowUrl": "/users/awdeorio/",
-        "postid": "/posts/{}/".format(postid_url_slug),
-        "url": flask.request.path,
-    }
-    return flask.jsonify(**context)
+def api_get_post_one(postid_url_slug):
+  username = check_permission()
+
+  error = None
+  try:
+      connection = insta485.model.get_db()
+      #image
+      cur = connection.execute(
+          "SELECT postid, owner, u.userimage, p.filename, created \
+            FROM posts p\
+            LEFT JOIN (SELECT username, filename as userimage \
+                      FROM users) u \
+            ON username = owner \
+            WHERE postid = (?)", (postid_url_slug,)
+      )
+      post = cur.fetchall()
+      if len(post) == 0:
+        raise CustomError("Not Found", 404)
+      #likes    
+      cur = connection.execute(
+          "SELECT COUNT(*) as c from likes \
+          WHERE postid = (?)", (postid_url_slug,)
+      )
+      likes = cur.fetchall()   
+  
+      #comments  
+      cur = connection.execute(
+          "SELECT text, owner, commentid \
+          FROM comments \
+          WHERE postid = (?) \
+          ORDER BY commentid", (postid_url_slug,)
+      )
+      comments = cur.fetchall()
+
+      #logged user like post
+      cur = connection.execute(
+          "SELECT likeid \
+          FROM likes \
+          WHERE postid = :postid AND owner = :owner",  
+          {"postid":postid_url_slug,
+            "owner" :username}
+      )
+      liked = cur.fetchall()
+
+  except sqlite3.Error as e:
+      print(f"{type(e)}, {e}")
+      error = e
+  insta485.model.close_db(error)
+  #TODO handle postid out of range
+  if len(liked) > 0:
+    like_detail = {"lognameLikesThis": True,
+                  "numLikes": likes[0]['c'],
+                  "url": flask.url_for('api_get_like_one', likeid = liked[0]['likeid'])}
+  else:
+    like_detail = {"lognameLikesThis": True,
+                  "numLikes": likes[0]['c'],
+                  "url": None}
+  for c in comments:
+    c['lognameOwnsThis'] = c['owner'] == username
+    c['ownerShowUrl'] = flask.url_for('view_user', user_url_slug = c['owner'])
+    c['url'] = flask.url_for('api_get_comment_one', commentid = c['commentid'])
+  
+  
+  context = {
+    "comments_url": flask.url_for('api_get_comments', postid = postid_url_slug),
+    "created": post[0]["created"],
+    "imgUrl": flask.url_for('image', file = post[0]['filename']),
+    "comments": comments,
+    "likes": like_detail,
+    "owner"  : post[0]["owner"],
+    "ownerImgUrl": flask.url_for('image', file =  post[0]['userimage']),
+    "ownerShowUrl": flask.url_for('view_user', user_url_slug = post[0]["owner"]),
+    "postShowUrl": flask.url_for('view_post', postid = postid_url_slug),
+    "postid" : postid_url_slug,
+    #get the current url
+    "url": flask.request.path
+  }
+  return flask.jsonify(**context)
+
+@insta485.app.route('/api/v1/comments/<int:commentid>/')
+def api_get_comment_one(commentid):
+  return 'comment'
+
+@insta485.app.route('/api/v1/comments/')
+def api_get_comments():
+  # postid = flask.request.args.get('postid')
+  return 'comments'
+
+@insta485.app.route('/api/v1/likes/<int:likeid>/')
+def api_get_like_one(likeid):
+  return 'like'
 
 @insta485.app.route('/api/v1/')
 def get_source():
@@ -152,6 +253,6 @@ def get_source():
   "comments": "/api/v1/comments/",
   "likes": "/api/v1/likes/",
   "posts": "/api/v1/posts/",
-  "url": "/api/v1/"
+  "url": "/api/v1/",
   }
   return flask.jsonify(**context)
