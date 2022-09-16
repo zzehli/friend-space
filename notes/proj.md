@@ -1,0 +1,1 @@
+* Separated routes into `View` and `api` folders. The view folder handles non-api requests.

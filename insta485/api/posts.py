@@ -1,51 +1,14 @@
 """REST API for posts."""
-from multiprocessing import context
 import flask
 import insta485
 import sqlite3
 from insta485.api.custom_error import CustomError
-from insta485.api.util import password_hash
-
-def check_permission():
-  """
-  Check login information through request or session, return logged in username
-  if authorization succeeds
-  """
-  if 'user' not in flask.session:
-    if flask.request.authorization == None:
-      raise CustomError("Forbidden", status_code=403)
-
-    username = flask.request.authorization['username']
-    password = flask.request.authorization['password']
-
-    #image
-    try:
-        connection = insta485.model.get_db()
-        cur = connection.execute(
-            "SELECT password \
-            FROM users \
-            WHERE username = (?)", (username,)
-        )
-        pwd_fetch = cur.fetchone()
-        
-
-    except sqlite3.Error as e:
-        print(f"{type(e)}, {e}")
-        error = e
-
-    password_atempt = password_hash(pwd_fetch['password'].split('$')[1],password)
-
-    if pwd_fetch['password'] != password_atempt:
-      raise CustomError("Forbidden", 403)
-  else:
-    username = flask.session['user']
-  
-  return username
+from insta485.api.util import check_permission
 
 #custom error handling
 @insta485.app.errorhandler(CustomError)
 def invalid_credential(e):
-  return flask.jsonify(e.to_dict())
+  return flask.jsonify(e.to_dict()), e.status_code
 
 @insta485.app.route('/api/v1/posts/')
 def api_get_posts():
@@ -203,7 +166,6 @@ def api_get_post_one(postid_url_slug):
       print(f"{type(e)}, {e}")
       error = e
   insta485.model.close_db(error)
-  #TODO handle postid out of range
   if len(liked) > 0:
     like_detail = {"lognameLikesThis": True,
                   "numLikes": likes[0]['c'],
@@ -233,19 +195,6 @@ def api_get_post_one(postid_url_slug):
     "url": flask.request.path
   }
   return flask.jsonify(**context)
-
-@insta485.app.route('/api/v1/comments/<int:commentid>/')
-def api_get_comment_one(commentid):
-  return 'comment'
-
-@insta485.app.route('/api/v1/comments/')
-def api_get_comments():
-  # postid = flask.request.args.get('postid')
-  return 'comments'
-
-@insta485.app.route('/api/v1/likes/<int:likeid>/')
-def api_get_like_one(likeid):
-  return 'like'
 
 @insta485.app.route('/api/v1/')
 def get_source():
