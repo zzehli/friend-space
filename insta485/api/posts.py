@@ -19,9 +19,10 @@ def api_get_posts():
 
   lte = flask.request.args.get('postid_lte')
   size = flask.request.args.get('size', default=10, type = int)
-  page = flask.request.args.get('page', default=1, type = int)
+  page = flask.request.args.get('page', default=0, type = int)
   connection = insta485.model.get_db()
-
+  if size <0 or page < 0:
+    raise CustomError('Bad Request', 400)
   if lte != None:
     try:
           cur = connection.execute(
@@ -36,31 +37,14 @@ def api_get_posts():
           LIMIT :limit OFFSET :offset", {"lte": lte,
                                          "user": username,
                                          "limit": size,
-                                         "offset": (page-1) * size }
+                                         "offset": page * size }
           )
           postid_fetch = cur.fetchall()
 
-          cur = connection.execute(
-          "SELECT posts.postid \
-          FROM posts \
-          INNER JOIN (SELECT DISTINCT username2 \
-              FROM following \
-              WHERE username1 = :user OR username2 = :user) AS f \
-          ON posts.owner = f.username2 \
-          WHERE posts.postid <= :lte \
-          ORDER BY posts.postid DESC \
-          LIMIT :limit OFFSET :offset", {"lte": lte,
-                                         "user": username,
-                                         "limit": size,
-                                         "offset": page * size }
-          )
-          next_fetch = cur.fetchall()
-          print(next_fetch)
-          next = True if len(next_fetch) > 0 else False
-          if next == True:
-            next_url = flask.url_for('api_get_posts', postid_lte = lte, page = page + 1, size = size)
-          else:
+          if len(postid_fetch) < size:
             next_url = ""
+          else:
+            next_url = flask.url_for('api_get_posts', size = size, page = page + 1, postid_lte = lte)
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e 
@@ -76,29 +60,14 @@ def api_get_posts():
           ORDER BY posts.postid DESC \
           LIMIT :limit OFFSET :offset", {"user": username,
                                          "limit": size,
-                                         "offset": (page-1) * size }
-          )
-          postid_fetch = cur.fetchall()
-
-          cur = connection.execute(
-          "SELECT posts.postid \
-          FROM posts \
-          INNER JOIN (SELECT DISTINCT username2 \
-              FROM following \
-              WHERE username1 = :user OR username2 = :user) AS f \
-          ON posts.owner = f.username2 \
-          ORDER BY posts.postid DESC \
-          LIMIT :limit OFFSET :offset", {"user": username,
-                                         "limit": size,
                                          "offset": page * size }
           )
-          next_fetch = cur.fetchall()
-          next = True if len(next_fetch) > 0 else False
-          if next == True:
-            next_url = flask.url_for('api_get_posts', page = page + 1, size = size)
+          postid_fetch = cur.fetchall()
+          if len(postid_fetch) < size:
+            next_url = ""
           else:
-            next_url = ""          
-          
+            newestid = postid_fetch[0]['postid']
+            next_url = flask.url_for('api_get_posts', size = size, page = page + 1, postid_lte = newestid)
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e 
@@ -107,13 +76,16 @@ def api_get_posts():
     id = p['postid']
     p['url'] = '/api/v1/posts/' + str(id) + '/'
   
+  #get current quest path, might be a better way to do it
   insta485.model.close_db(error)
-
-
+  if flask.request.args == {}:
+    url = flask.request.path
+  else:
+    url = flask.request.full_path
   context = {
   "next": next_url,
   "results": postid_fetch,
-    "url": flask.request.path
+  "url": url
   }
   return flask.jsonify(**context)
 
@@ -171,7 +143,7 @@ def api_get_post_one(postid_url_slug):
                   "numLikes": likes[0]['c'],
                   "url": flask.url_for('api_get_like_one', likeid = liked[0]['likeid'])}
   else:
-    like_detail = {"lognameLikesThis": True,
+    like_detail = {"lognameLikesThis": False,
                   "numLikes": likes[0]['c'],
                   "url": None}
   for c in comments:

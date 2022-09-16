@@ -7,6 +7,37 @@ import flask
 import sqlite3
 from insta485.api.custom_error import CustomError
 
+@insta485.app.route('/accounts/', methods = ['POST'])
+def account():
+
+    connection = insta485.model.get_db()
+    error = None
+
+   
+    operation = flask.request.form['operation']
+    if operation == 'login':
+        username = flask.request.form['username']
+        password = flask.request.form['password']
+        try:
+            cur = connection.execute(
+                "SELECT username, password \
+                FROM users \
+                WHERE username = (?)", (username,)
+            )
+            user = cur.fetchone()
+        except sqlite3.Error as e:
+            print(f"{type(e)}, {e}")
+            error = e
+        if user == None:
+            flask.abort(403)
+        password_atempt = password_hash(user['password'].split('$')[1],password)
+        if password_atempt == user['password']:
+            flask.session['user'] = username
+        else:
+            flask.abort(403)
+    insta485.model.close_db(error)
+    return ""
+
 
 def serialize_save(fileobj):
     """
@@ -47,7 +78,7 @@ def check_permission():
 
     username = flask.request.authorization['username']
     password = flask.request.authorization['password']
-
+    error = None
     #image
     try:
         connection = insta485.model.get_db()
