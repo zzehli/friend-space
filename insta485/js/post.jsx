@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 class Post extends React.Component {
-  /* Display number of image and post owner of a single post
-   */
+  /* Display number of image and post owner of a single post*/
   constructor(props) {
     // Initialize mutable state
     super(props);
     this.state = { imgUrl: '', owner: '' };
   }
+
   componentDidMount() {
     // This line automatically assigns this.props.url to the const variable url
     const { url } = this.props;
@@ -25,6 +25,7 @@ class Post extends React.Component {
       })
       .catch((error) => console.log(error));
   }
+  
   render() {
     // This line automatically assigns this.state.imgUrl to the const variable imgUrl
     // and this.state.owner to the const variable owner
@@ -40,6 +41,7 @@ class Post extends React.Component {
     );
   }
 }
+
 Post.propTypes = {
   url: PropTypes.string.isRequired,
 };

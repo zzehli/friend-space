@@ -6,63 +6,11 @@
 
 {% block content %}
 <main>
-    <!-- have the most recent post appear first, with reverse filter -->
-    {% for post in posts.values() %}
-    <div class = "card">
-        <!-- name -->
-        <div class = "cardHeader">
-            <a class = "user" href = "{{url_for('user', user_url_slug = post.owner)}}">
-                <img src="{{url_for('image', file = post.owner_img_url)}}">
-                <p>{{post.owner}}</p>
-            </a>
-            <a class = "timestamp" href = "/posts/{{post.postid}}/">{{post.timestamp}}</a>
-        </div>
-        <img src="{{url_for('image', file = post.filename)}}">
-        <!-- comments -->
-        <div class = "cardComments">
-            <p class = "likes">
-                {{post.likes}} 
-                {% if post.likes == 1 %}
-                    like
-                {% else %}
-                    likes
-                {% endif %}
-            </p>
-            <ul class = "comments">
-                {% for comment in post.comments %}
-                <p><a href = "/users/{{comment.owner}}">{{comment.owner}}</a>
-                    {{comment.text}}</p>
-                {% endfor %}
-
-                <p>
-                    <form action="{{url_for('post_comments', target = url_for('index'))}}" method="post" enctype="multipart/form-data">
-                      <input type="hidden" name="operation" value="create"/>
-                      <input type="hidden" name="postid" value="{{post.postid}}"/>
-                      <input type="text" name="text" required/>
-                      <input type="submit" name="comment" value="comment"/>
-                    </form>
-                </p>
-            </ul>
-            {% if post.liked == False %}
-            <form action="{{url_for('post_likes', target = url_for('index'))}}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="operation" value="like"/>
-                <input type="hidden" name="postid" value="{{post.postid}}"/>
-                <input type="submit" name="like" value="like"/>
-            </form>
-            {% else %}
-            <form action="{{url_for('post_likes', target = url_for('index'))}}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="operation" value="unlike"/>
-                <input type="hidden" name="postid" value="{{post.postid}}"/>
-                <input type="submit" name="like" value="unlike"/>
-            </form>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
-</main>
+    <!-- have the most recent post appear first -->
 <div id="reactEntry">
     Loading ...
 </div>
 <!-- Load JavaScript -->
 <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
+</main>
 {% endblock %}

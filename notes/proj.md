@@ -1,1 +1,7 @@
 * Separated routes into `View` and `api` folders. The view folder handles non-api requests.
+* **Day 18** I have started the project a while ago and it's been a week since I made some significant progression on it. I was able to finish most of the API routes that I will use on the client side. The challenge is to rewrite the [pages](https://github.com/zzehli/server-side-instgram/tree/main/insta485/templates) in React. It took me a while to get used to the language of React. I still have some questions, but my understanding of it should be able to finish the current project. In the main page, we are essentially making an API call to get all the posts information and display them on the page. The API call is made on the client side through react component, rather than on the server side. The layout will be very similar to a list, except the content of each item might contain additional information such likes and comments, that will activate further UI changes. The main reference I have are
+EECS 485 [tutorial](https://eecs485staff.github.io/p3-insta485-clientside/setup_react.html) on React for API calls
+React official tutorial on [API calls](https://reactjs.org/docs/faq-ajax.html)
+Same for the [list layout](https://reactjs.org/docs/thinking-in-react.html)
+
+Another challenge that I encounter is the password management in the new implementation. Because API calls demand authentication, (no, api calls will work if the user is in session, therefore, no need to save password anywhere)
