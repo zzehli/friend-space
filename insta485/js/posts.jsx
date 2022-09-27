@@ -1,20 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-class Posts extends React.Component {
-    //determine the len of props
-    //make Posts that len with corresponding
-    //use key for list
+import Post from './post';
 
-    //first, write a hard-code version of this
-    
-    //second, replace this with API and state (at this stage, there is no visual change, the state)
+class PostList extends React.Component {
+
+      constructor(props) {
+      super(props);
+      this.state = {
+        next : "",
+        pos : []
+      };
+    }
+
+    componentDidMount() {
+      const { url } = this.props;
+
+      fetch(url, { credentials: 'same-origin'})
+        .then( res => res.json())
+        .then(
+          (result) => {
+            this.setState({
+              next: result.next,
+              pos: result.results
+            });
+          },
+          (error) => {
+            console.log(error)
+          }
+        )
+    }
+
     render() {
       const rows = [];
-      
-      this.props.data.forEach(element => {
+      const {next, pos} = this.state;
+      pos.forEach(element => {
         rows.push(
-          <Single content = {element}
-                  key = {element.postid}/>
+          <Post 
+            url = {element.url}
+            key = {element.postid}/>
         )
       });
         
@@ -26,18 +49,8 @@ class Posts extends React.Component {
     }
 }
 
-class Single extends React.Component {
-    render() {
-      return (
-        <div>
-          <p>{this.props.content.owner}</p>
-        </div>
-      )
-    } 
-}
 
-
-// Posts.propTypes = {
-//   url: PropTypes.string.isRequired,
-// };
-export default Posts;
+PostList.propTypes = {
+  url: PropTypes.string.isRequired,
+};
+export default PostList;
