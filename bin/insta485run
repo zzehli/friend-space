@@ -10,8 +10,6 @@ FILE= var/insta485.sqlite3
 if test ! -f "$FILE" ;
 then
     ./bin/insta485db reset
-    ./bin/insta485db random
-
 fi
 
 export FLASK_ENV=development

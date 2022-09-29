@@ -1,11 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import CommentList from './comments'
 class Post extends React.Component {
   /* Display number of image and post owner of a single post*/
   constructor(props) {
     // Initialize mutable state
+    // TODO: initialize all properties
     super(props);
-    this.state = { imgUrl: '', owner: '' };
+    this.state = { imgUrl: '', 
+                   owner: '',
+                   comments: [] };
   }
 
   componentDidMount() {
@@ -20,23 +24,43 @@ class Post extends React.Component {
       .then((data) => {
         this.setState({
           imgUrl: data.imgUrl,
-          owner: data.owner
+          owner: data.owner,
+          ownerShowUrl: data.ownerShowUrl,
+          ownerImgUrl: data.ownerImgUrl,
+          postShowUrl: data.postShowUrl,
+          created: data.created,
+          comments: data.comments
         });
       })
       .catch((error) => console.log(error));
   }
-  
   render() {
-    // This line automatically assigns this.state.imgUrl to the const variable imgUrl
-    // and this.state.owner to the const variable owner
-    const { imgUrl, owner } = this.state;
+    const { imgUrl, 
+            owner, 
+            ownerShowUrl, 
+            ownerImgUrl, 
+            postShowUrl, 
+            created,
+            comments } = this.state;
     // Render number of post image and post owner
     return (
-      <div className="post">
-        <img src={imgUrl} />
-        <p>
-          {owner}
-        </p>
+      <div className="card">
+        <div className = "cardHeader">
+        <a className = "user" href = {ownerShowUrl}>
+            <img src={ownerImgUrl}/>
+            <p>{owner}</p>
+        </a>
+        <a className = "timestamp" href = {postShowUrl}>{created}</a>
+        </div>
+        <img src={imgUrl}/>
+        <div className="cardComments">
+          <CommentList comments = {comments}/>
+          {/* {comments.map( elem => (
+            <div key = {elem.commentid}>
+              {elem.text}
+            </div>
+          ))} */}
+        </div>
       </div>
     );
   }
