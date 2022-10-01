@@ -6,6 +6,7 @@ import hashlib
 import flask
 import sqlite3
 from insta485.api.custom_error import CustomError
+from insta485.views import util
 
 def check_permission():
   """
@@ -34,7 +35,7 @@ def check_permission():
         print(f"{type(e)}, {e}")
         error = e
     insta485.model.close_db(error)
-    password_atempt = password_hash(pwd_fetch['password'].split('$')[1],password)
+    password_atempt = util.password_hash(pwd_fetch['password'].split('$')[1],password)
 
     if pwd_fetch['password'] != password_atempt:
       raise CustomError("Forbidden", 403)

@@ -153,7 +153,7 @@ def api_get_post_one(postid_url_slug):
   
   
   context = {
-    "comments_url": flask.url_for('api_get_comments', postid = postid_url_slug),
+    "comments_url": flask.url_for('api_post_comment', postid = postid_url_slug),
     "created": post[0]["created"],
     "imgUrl": flask.url_for('image', file = post[0]['filename']),
     "comments": comments,
