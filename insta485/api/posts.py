@@ -143,6 +143,7 @@ def api_get_post_one(postid_url_slug):
                   "numLikes": likes[0]['c'],
                   "url": flask.url_for('api_get_like_one', likeid = liked[0]['likeid'])}
   else:
+    # TODO: url is null when user doesn't like it
     like_detail = {"lognameLikesThis": False,
                   "numLikes": likes[0]['c'],
                   "url": None}

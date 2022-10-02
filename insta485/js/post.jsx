@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // import CommentList from './comments'
 import CommentAdd from './newcomment'
+import Like from './like'
 
 class Post extends React.Component {
   /* Display number of image and post owner of a single post*/
@@ -13,18 +14,20 @@ class Post extends React.Component {
 
     this.handleValueChange = this.handleValueChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleClick = this.handleClick.bind(this)
 
 
     this.state = { commentInput: '',
                    imgUrl: '', 
                    owner: '',
-                   comments: [] };
+                   comments: [],
+                   likes: {} };
   }
 
   handleValueChange(input){
     this.setState({commentInput: input})
   }
-  //TODO: make the POST call upon submit and sync with comments
+
   handleSubmit(comment){
     // console.log(comment)
     
@@ -32,11 +35,10 @@ class Post extends React.Component {
     // console.log(postid)
     // console.log('hjere?')
     // console.log(JSON.stringify({'text': comment}))
-    //compose the query param in the fetch url
-    //make the POST request with Fetch
     //update comments in the state
     //alternatively, insert and setstate to the res of get comments request
     // handle error
+
     fetch('/api/v1/comments/' + '?' + new URLSearchParams({postid : postid}), 
           {method: 'POST',
            headers: {'Content-Type': 'application/json'},
@@ -58,6 +60,51 @@ class Post extends React.Component {
     // console.log(this.props.comments.length)
   }
 
+  handleClick(liked){
+    const postid = this.state.postShowUrl.split('/')[2]
+    let newLike = liked? this.state.likes.numLikes-1: this.state.likes.numLikes+1
+    console.log(this.state.likes)
+
+    if (!liked) {
+      fetch('/api/v1/likes/' + '?' + new URLSearchParams({postid : postid}), 
+      {method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin'})
+      .then(res => res.json())
+      .then(
+        (res) => {
+          this.setState(prevState => ({
+            likes: {
+              ...prevState.likes,
+              numLikes: newLike,
+              lognameLikesThis: true,
+              url: res.url
+            }
+          }))
+          },
+        (error) => {console.log(error)}
+    )} else {
+      let likeId = this.state.likes.url.split('/')[4]
+      fetch('/api/v1/likes/' + likeId + '/', 
+      {method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin'})
+      .then(res => res)
+      .then(
+        (res) => {
+          this.setState(prevState => ({
+            likes: {
+              ...prevState.likes,
+              numLikes: newLike,
+              lognameLikesThis: false
+            }
+          }))
+          },
+        (error) => {console.log(error)}
+        )
+        }    
+  }
+
   componentDidMount() {
     // This line automatically assigns this.props.url to the const variable url
     const { url } = this.props;
@@ -75,7 +122,8 @@ class Post extends React.Component {
           ownerImgUrl: data.ownerImgUrl,
           postShowUrl: data.postShowUrl,
           created: data.created,
-          comments: data.comments
+          comments: data.comments,
+          likes: data.likes
         });
       })
       .catch((error) => console.log(error));
@@ -93,7 +141,8 @@ class Post extends React.Component {
     // console.log(postShowUrl)
     // console.log(comments.length)
 
-    // Render number of post image and post owner
+    // TODO: 1. render the number of likes, which is a state
+    //      2. complete button and onClick method (involve a post to db)
     return (
       <div className="card">
         <div className = "cardHeader">
@@ -106,14 +155,20 @@ class Post extends React.Component {
         <img src={imgUrl}/>
         <div className="cardComments">
           {/* <CommentList comments = {comments}/> */}
-          {comments.map( elem => (
-            <div key = {elem.commentid}>
-              {elem.text}
-            </div>
-          ))}
+          <p className='likes'>{this.state.likes.numLikes}</p>
+          <div className = "comments">
+            {comments.map( elem => (
+              <p key = {elem.commentid}><a href = {elem.ownerShowUrl}>{elem.owner}</a>
+                {elem.text}
+              </p>
+            ))}
+          </div>
           <CommentAdd value = {input}
                       onValueChange = {this.handleValueChange}
                       onSubmit = {this.handleSubmit}/>
+          <p className='likes'><Like  value = {this.state.likes}
+                                      onClick = {() => this.handleClick(this.state.likes.lognameLikesThis)}/>
+          </p>
         </div>
       </div>
     );
