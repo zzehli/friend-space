@@ -34,13 +34,9 @@ def api_get_comment_one(commentid):
 
 @insta485.app.route('/api/v1/comments/', methods = ['POST'])
 def api_post_comment():
-  print(flask.request)
   postid = flask.request.args.get('postid')
-  print('here?')
-  print(postid)
   text = flask.request.json.get('text')
 
-  print(text)
   if text == '':
     raise CustomError('No empty comment allowed', 403)
   username = check_permission()

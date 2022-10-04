@@ -6,7 +6,7 @@ Same for the [list layout](https://reactjs.org/docs/thinking-in-react.html)
 
 Another challenge that I encounter is the password management in the new implementation. Because API calls demand authentication, (no, api calls will work if the user is in session, therefore, no need to save password anywhere)
 * **Day 27** I have implemented most of the functionalities of the main page with React. Several tasks remain:
-- [ ] submit with `enter` key
+- [x] submit with `enter` key
 - [ ] add comment deletion function
 - [ ] toggle like and unlike through state
 - [ ] double click on unliked image will like it

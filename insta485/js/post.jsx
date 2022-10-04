@@ -64,7 +64,7 @@ class Post extends React.Component {
   handleClick(liked){
     const postid = this.state.postShowUrl.split('/')[2]
     let newLike = liked? this.state.likes.numLikes-1: this.state.likes.numLikes+1
-    console.log(this.state.likes)
+    // console.log(this.state.likes)
 
     if (!liked) {
       fetch('/api/v1/likes/' + '?' + new URLSearchParams({postid : postid}), 
