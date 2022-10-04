@@ -58,6 +58,7 @@ class Post extends React.Component {
           (error) => {console.log(error)}
         )
     // console.log(this.props.comments.length)
+    this.setState({commentInput:''})
   }
 
   handleClick(liked){
@@ -141,8 +142,6 @@ class Post extends React.Component {
     // console.log(postShowUrl)
     // console.log(comments.length)
 
-    // TODO: 1. render the number of likes, which is a state
-    //      2. complete button and onClick method (involve a post to db)
     return (
       <div className="card">
         <div className = "cardHeader">
@@ -162,10 +161,11 @@ class Post extends React.Component {
                 {elem.text}
               </p>
             ))}
-          </div>
-          <CommentAdd value = {input}
+            <CommentAdd value = {input}
                       onValueChange = {this.handleValueChange}
                       onSubmit = {this.handleSubmit}/>
+          </div>
+          
           <p className='likes'><Like  value = {this.state.likes}
                                       onClick = {() => this.handleClick(this.state.likes.lognameLikesThis)}/>
           </p>
