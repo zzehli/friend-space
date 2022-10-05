@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import CommentList from './comments'
 import CommentAdd from './newcomment'
 import Like from './like'
 
@@ -15,7 +14,8 @@ class Post extends React.Component {
     this.handleValueChange = this.handleValueChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleClick = this.handleClick.bind(this)
-
+    this.handleClickLike = this.handleClickLike.bind(this)
+    this.handleDeleteComment = this.handleDeleteComment.bind(this)
 
     this.state = { commentInput: '',
                    imgUrl: '', 
@@ -23,7 +23,7 @@ class Post extends React.Component {
                    comments: [],
                    likes: {} };
   }
-
+  //TODO use inline function in render
   handleValueChange(input){
     this.setState({commentInput: input})
   }
@@ -57,7 +57,6 @@ class Post extends React.Component {
             },
           (error) => {console.log(error)}
         )
-    // console.log(this.props.comments.length)
     this.setState({commentInput:''})
   }
 
@@ -85,25 +84,67 @@ class Post extends React.Component {
           },
         (error) => {console.log(error)}
     )} else {
-      let likeId = this.state.likes.url.split('/')[4]
-      fetch('/api/v1/likes/' + likeId + '/', 
-      {method: 'DELETE',
-      headers: {'Content-Type': 'application/json'},
-      credentials: 'same-origin'})
-      .then(res => res)
-      .then(
-        (res) => {
-          this.setState(prevState => ({
-            likes: {
-              ...prevState.likes,
-              numLikes: newLike,
-              lognameLikesThis: false
-            }
-          }))
-          },
-        (error) => {console.log(error)}
-        )
-        }    
+        let likeId = this.state.likes.url.split('/')[4]
+        fetch('/api/v1/likes/' + likeId + '/', 
+        {method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'same-origin'})
+        .then(res => res)
+        .then(
+          (res) => {
+            this.setState(prevState => ({
+              likes: {
+                ...prevState.likes,
+                numLikes: newLike,
+                lognameLikesThis: false
+              }
+            }))
+            },
+          (error) => {console.log(error)}
+          )
+      }    
+  }
+
+  handleClickLike(e, liked) {
+    if (e.detail === 2) {
+      if (!liked) {
+        const postid = this.state.postShowUrl.split('/')[2]
+        let newLike = liked? this.state.likes.numLikes-1: this.state.likes.numLikes+1
+        fetch('/api/v1/likes/' + '?' + new URLSearchParams({postid : postid}), 
+        {method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'same-origin'})
+        .then(res => res.json())
+        .then(
+          (res) => {
+            this.setState(prevState => ({
+              likes: {
+                ...prevState.likes,
+                numLikes: newLike,
+                lognameLikesThis: true,
+                url: res.url
+              }
+            }))
+            },
+          (error) => {console.log(error)}
+      )}
+    }
+  }
+  //TODO: fix response
+  handleDeleteComment(commentid) {
+    fetch('/api/v1/comments/' + commentid + '/', 
+        {method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'same-origin'})
+        .then(res => res)
+        .then(
+          (res) => {
+            this.setState(prevState => ({
+              comments: prevState.comments.filter(elem => commentid !== elem.commentid)
+            }))
+            },
+          (error) => {console.log(error)}
+          )
   }
 
   componentDidMount() {
@@ -151,15 +192,18 @@ class Post extends React.Component {
         </a>
         <a className = "timestamp" href = {postShowUrl}>{created}</a>
         </div>
-        <img src={imgUrl}/>
+        <img src={imgUrl}  onClick={(e) => this.handleClickLike(e, this.state.likes.lognameLikesThis)}/>
         <div className="cardComments">
           {/* <CommentList comments = {comments}/> */}
           <p className='likes'>{this.state.likes.numLikes}</p>
           <div className = "comments">
             {comments.map( elem => (
-              <p key = {elem.commentid}><a href = {elem.ownerShowUrl}>{elem.owner}</a>
-                {elem.text}
-              </p>
+              <div key = {elem.commentid}>
+                <p><a href = {elem.ownerShowUrl}>{elem.owner}</a>
+                  {elem.text}
+                </p>
+                {elem.lognameOwnsThis && <button onClick={() => this.handleDeleteComment(elem.commentid)}>delete</button>}
+              </div>
             ))}
             <CommentAdd value = {input}
                       onValueChange = {this.handleValueChange}

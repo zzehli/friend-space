@@ -29,15 +29,15 @@ class CommentAdd extends React.Component {
 
     render() {
         return (
-        <p>
-            <form onSubmit={this.handleSubmit}>
-                <input 
-                type="text" 
-                value={this.props.value} 
-                onChange={this.handleChange}
-                onKeyPress={this.handleKeypress}/>
-            </form>
-        </p>
+
+        <form onSubmit={this.handleSubmit}>
+            <input 
+            type="text" 
+            value={this.props.value} 
+            onChange={this.handleChange}
+            onKeyPress={this.handleKeypress}/>
+        </form>
+
         );
     }
 }
