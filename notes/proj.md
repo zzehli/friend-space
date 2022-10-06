@@ -12,3 +12,4 @@ Another challenge that I encounter is the password management in the new impleme
 - [x] double click on unliked image to like
 - [x] remove the words in the input after submission
 - [ ] infinite scroll
+* **Day 28** Learning react: despite the amont of tutorials online, the [official doc](https://reactjs.org/docs/hello-world.html) remains an execellent entry point to React. The structure of React can be intimidating at first. It's unclear how it fits the traditional HTML/CSS/JS structure. After reading the official doc, I find it easier to think about JSX as a templated language and the rest of React added functionalities to the templates. The problem with the doc is that it starts with setState and hooks are only introduced later. So it takes time to be able to read more recent React codes that use hooks.

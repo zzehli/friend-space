@@ -29,12 +29,9 @@ class Post extends React.Component {
   }
 
   handleSubmit(comment){
-    // console.log(comment)
     
     const postid = this.state.postShowUrl.split('/')[2]
-    // console.log(postid)
-    // console.log('hjere?')
-    // console.log(JSON.stringify({'text': comment}))
+   
     //update comments in the state
     //alternatively, insert and setstate to the res of get comments request
     // handle error
@@ -63,7 +60,6 @@ class Post extends React.Component {
   handleClick(liked){
     const postid = this.state.postShowUrl.split('/')[2]
     let newLike = liked? this.state.likes.numLikes-1: this.state.likes.numLikes+1
-    // console.log(this.state.likes)
 
     if (!liked) {
       fetch('/api/v1/likes/' + '?' + new URLSearchParams({postid : postid}), 
@@ -130,7 +126,7 @@ class Post extends React.Component {
       )}
     }
   }
-  //TODO: fix response
+
   handleDeleteComment(commentid) {
     fetch('/api/v1/comments/' + commentid + '/', 
         {method: 'DELETE',
