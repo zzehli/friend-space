@@ -6,5 +6,5 @@ import PostList from './posts';
 const root = createRoot(document.getElementById('reactEntry'));
 // This method is only called once
 // Insert the post component into the DOM
-root.render(<PostList url = "/api/v1/posts/" />);
+root.render(<PostList url = "/api/v1/posts/?size=5" />);
   
