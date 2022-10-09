@@ -59,7 +59,7 @@ def api_post_comment():
     "commentid": commentid,
     "lognameOwnsThis": True,
     "owner": username,
-    "ownerShowUrl": flask.url_for('view_user', user_url_slug = username),
+    "ownerShowUrl": flask.url_for('user', user_url_slug = username),
     "text": text,
     "url": flask.url_for('api_get_comment_one', commentid = commentid)
   }

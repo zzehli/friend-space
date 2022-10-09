@@ -1,2 +1,2 @@
 """Views, one for each Insta485 page."""
-from insta485.views.routes import view_post
+from insta485.views.routes import login

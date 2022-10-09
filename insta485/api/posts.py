@@ -149,7 +149,7 @@ def api_get_post_one(postid_url_slug):
                   "url": None}
   for c in comments:
     c['lognameOwnsThis'] = c['owner'] == username
-    c['ownerShowUrl'] = flask.url_for('view_user', user_url_slug = c['owner'])
+    c['ownerShowUrl'] = flask.url_for('user', user_url_slug = c['owner'])
     c['url'] = flask.url_for('api_get_comment_one', commentid = c['commentid'])
   
   
@@ -161,8 +161,8 @@ def api_get_post_one(postid_url_slug):
     "likes": like_detail,
     "owner"  : post[0]["owner"],
     "ownerImgUrl": flask.url_for('image', file =  post[0]['userimage']),
-    "ownerShowUrl": flask.url_for('view_user', user_url_slug = post[0]["owner"]),
-    "postShowUrl": flask.url_for('view_post', postid = postid_url_slug),
+    "ownerShowUrl": flask.url_for('user', user_url_slug = post[0]["owner"]),
+    "postShowUrl": flask.url_for('post', postid_url_slug = postid_url_slug),
     "postid" : postid_url_slug,
     #get the current url
     "url": flask.request.path
