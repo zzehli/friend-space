@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CommentAdd from './newcomment'
 import Like from './like'
+import moment from 'moment'
 
 class Post extends React.Component {
   /* Display number of image and post owner of a single post*/
@@ -186,7 +187,7 @@ class Post extends React.Component {
             <img src={ownerImgUrl}/>
             <p>{owner}</p>
         </a>
-        <a className = "timestamp" href = {postShowUrl}>{created}</a>
+        <a className = "timestamp" href = {postShowUrl}>{moment(created, moment.ISO_8601).fromNow()}</a>
         </div>
         <img src={imgUrl}  onClick={(e) => this.handleClickLike(e, this.state.likes.lognameLikesThis)}/>
         <div className="cardComments">

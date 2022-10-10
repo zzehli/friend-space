@@ -6,7 +6,7 @@ CREATE TABLE users(
 	email VARCHAR(40) NOT NULL,
 	filename VARCHAR(64) NOT NULL,
 	password VARCHAR(256) NOT NULL,
-	created DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created DATETIME DEFAULT (datetime('now','localtime')),
 	PRIMARY KEY(username)
 );
 
@@ -14,7 +14,7 @@ CREATE TABLE posts(
 	postid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	filename VARCHAR(64) NOT NULL,
 	owner VARCHAR(20) NOT NULL ,
-	created DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created DATETIME DEFAULT (datetime('now','localtime')),
 	FOREIGN KEY(owner) REFERENCES users(username)
 	ON DELETE CASCADE
 );
@@ -22,7 +22,7 @@ CREATE TABLE posts(
 CREATE TABLE following(
 	username1 VARCHAR(20) NOT NULL,
 	username2 VARCHAR(20) NOT NULL,
-	created DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created DATETIME DEFAULT (datetime('now','localtime')),
 	PRIMARY KEY(username1, username2),
 	FOREIGN KEY(username1) REFERENCES users(username)
 	ON DELETE CASCADE,
@@ -35,7 +35,7 @@ CREATE TABLE comments(
 	owner VARCHAR(20) NOT NULL,
 	postid INTEGER NOT NULL ,
 	text VARCHAR(1024) NOT NULL,
-	created DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created DATETIME DEFAULT (datetime('now','localtime')),
 	FOREIGN KEY(owner) REFERENCES users(username)
 	ON DELETE CASCADE,
 	FOREIGN KEY(postid) REFERENCES posts(postid)
@@ -46,7 +46,7 @@ CREATE TABLE likes(
 	likeid INTEGER PRIMARY KEY AUTOINCREMENT,
 	owner VARCHAR(20) NOT NULL,
 	postid INTEGER NOT NULL,
-	created DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created DATETIME DEFAULT (datetime('now','localtime')),
 	FOREIGN KEY(owner) REFERENCES users(username)
 	ON DELETE CASCADE,
 	FOREIGN KEY(postid) REFERENCES posts(postid)

@@ -399,7 +399,7 @@ def post(postid_url_slug):
         print(f"{type(e)}, {e}")
         error = e
     insta485.model.close_db(error)
-    formated_time = arrow.get(post[0]["created"], 'YYYY-MM-DD HH:mm:ss')
+    formated_time = arrow.get(post[0]["created"] + " EDT", 'YYYY-MM-DD HH:mm:ss ZZZ')
     timestamp = formated_time.humanize()
     context = {"postid": post[0]["postid"],
                "owner": post[0]["owner"],
