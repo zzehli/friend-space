@@ -18,6 +18,12 @@
                     {{timestamp}}
                 </p>
             </div>
+            <p class="likes">{{likes}} 
+                {% if likes == 1 %}
+                    like
+                {% else %}
+                    likes
+                {% endif %}</p>
             <ul class = "comments">
                 {% for comment in comments %}
                 <li>

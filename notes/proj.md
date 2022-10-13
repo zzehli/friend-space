@@ -18,11 +18,11 @@ I have implemented most of the functionalities of the main page with React. Seve
 - [x] remove the words in the input after submission
 - [x] infinite scroll
 - [x] human readable time lapse
-- [ ] make like count more readable
+- [x] make like count more readable
 - [ ] more image into db random, randomize name as well
 - [x] add other pages
 - [ ] image click effect: https://codepen.io/ash_s_west/pen/GRZbvym
-- [ ] priority: post page doesn't show like nums
+- [x] post page doesn't show like nums
 
 ### Day 28 
 Learning react: despite the amont of tutorials online, the [official doc](https://reactjs.org/docs/hello-world.html) remains an execellent entry point to React. The structure of React can be intimidating at first. It's unclear how it fits the traditional HTML/CSS/JS structure. After reading the official doc, I find it easier to think about JSX as a templated language and the rest of React added functionalities to the templates. The problem with the doc is that it starts with setState and hooks are only introduced later. So it takes time to be able to read more recent React codes that use hooks.

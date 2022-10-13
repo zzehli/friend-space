@@ -8,7 +8,6 @@ class Post extends React.Component {
   /* Display number of image and post owner of a single post*/
   constructor(props) {
     // Initialize mutable state
-    // TODO: initialize all properties
     super(props);
 
 
@@ -24,7 +23,7 @@ class Post extends React.Component {
                    comments: [],
                    likes: {} };
   }
-  //TODO use inline function in render
+
   handleValueChange(input){
     this.setState({commentInput: input})
   }
@@ -35,8 +34,6 @@ class Post extends React.Component {
    
     //update comments in the state
     //alternatively, insert and setstate to the res of get comments request
-    // handle error
-
     fetch('/api/v1/comments/' + '?' + new URLSearchParams({postid : postid}), 
           {method: 'POST',
            headers: {'Content-Type': 'application/json'},
@@ -192,7 +189,11 @@ class Post extends React.Component {
         <img src={imgUrl}  onClick={(e) => this.handleClickLike(e, this.state.likes.lognameLikesThis)}/>
         <div className="cardComments">
           {/* <CommentList comments = {comments}/> */}
-          <p className='likes'>{this.state.likes.numLikes}</p>
+          {this.state.likes.numLikes > 0 && 
+              <p className='likes'>{this.state.likes.numLikes}
+                                    {this.state.likes.numLikes > 1? ' likes': ' like'}
+              </p>}
+          {/* <p className='likes'>{this.state.likes.numLikes}</p> */}
           <div className = "comments">
             {comments.map( elem => (
               <div key = {elem.commentid}>

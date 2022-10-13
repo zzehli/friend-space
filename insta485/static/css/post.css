@@ -19,6 +19,7 @@ main
 .post img
 {
     width: 70%;
+    object-fit: cover;
 }
 
 .postInfo
@@ -27,9 +28,6 @@ main
     flex-direction: column;
     padding: 10px 20px;
 }
-
-
-
 .postHeader
 {
     display: flex;
@@ -51,6 +49,12 @@ main
     width: 30px;
     margin-right: 10px;
     object-fit: cover;
+}
+
+.likes
+{
+    margin-top: 30px;
+    margin-bottom: 10px;
 }
 
 .comments
