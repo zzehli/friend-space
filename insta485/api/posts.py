@@ -30,8 +30,8 @@ def api_get_posts():
           FROM posts \
           INNER JOIN (SELECT DISTINCT username2 \
               FROM following \
-              WHERE username1 = :user OR username2 = :user) AS f \
-          ON posts.owner = f.username2 \
+              WHERE username1 = :user) AS f \
+          ON posts.owner = f.username2 OR posts.owner = :user\
           WHERE posts.postid <= :lte \
           ORDER BY posts.postid DESC \
           LIMIT :limit OFFSET :offset", {"lte": lte,

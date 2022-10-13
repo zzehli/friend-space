@@ -27,6 +27,7 @@ cookies.txt
 session.json
 bundle.js
 *.js.map
+deployed_*
 
 # EECS 485 Project 4
 tmp

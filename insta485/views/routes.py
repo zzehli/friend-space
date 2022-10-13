@@ -257,26 +257,6 @@ def image(file):
     else:
         flask.abort(403)
 
-# @insta485.app.route('/comments/')
-# def view_comments():
-#   return "comments"
-
-# @insta485.app.route('/comments/<int:commentid>/')
-# def view_comment_one(commentid):
-#   return "comment"
-
-# @insta485.app.route('/likes/<int:likeid>/')
-# def view_like(likeid):
-#   return "like"
-
-# @insta485.app.route('/posts/<postid>/')
-# def view_post(postid):
-#   return "post"
-
-# @insta485.app.route('/users/<user_url_slug>/')
-# def view_user(user_url_slug):
-#   return "user"
-
 @insta485.app.route('/users/<user_url_slug>/')
 def user(user_url_slug):
     #check url is valid against exiting users

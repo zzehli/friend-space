@@ -63,7 +63,6 @@ class PostList extends React.Component {
             key = {element.postid}/>
         )
       });
-      //TODO: get params for dataLength
       return (
         <div
         style={{

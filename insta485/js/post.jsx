@@ -174,8 +174,6 @@ class Post extends React.Component {
             comments } = this.state;
     
     const input = this.state.commentInput
-    // console.log(postShowUrl)
-    // console.log(comments.length)
 
     return (
       <div className="card">
@@ -188,12 +186,10 @@ class Post extends React.Component {
         </div>
         <img src={imgUrl}  onClick={(e) => this.handleClickLike(e, this.state.likes.lognameLikesThis)}/>
         <div className="cardComments">
-          {/* <CommentList comments = {comments}/> */}
           {this.state.likes.numLikes > 0 && 
               <p className='likes'>{this.state.likes.numLikes}
                                     {this.state.likes.numLikes > 1? ' likes': ' like'}
               </p>}
-          {/* <p className='likes'>{this.state.likes.numLikes}</p> */}
           <div className = "comments">
             {comments.map( elem => (
               <div key = {elem.commentid}>
