@@ -13,7 +13,6 @@ Another challenge that I encounter is the password management in the new impleme
 I have implemented most of the functionalities of the main page with React. Several tasks remain:
 - [x] submit with `enter` key
 - [x] add comment deletion function
-- [ ] toggle like and unlike through state
 - [x] double click on unliked image to like
 - [x] remove the words in the input after submission
 - [x] infinite scroll

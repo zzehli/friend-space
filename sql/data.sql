@@ -14,7 +14,13 @@ INSERT INTO posts(postid, filename, owner)
 VALUES (1, '122a7d27ca1d7420a1072f695d9290fad4501a41.jpg', 'awdeorio'),
 (2, 'ad7790405c539894d25ab8dcf0b79eed3341e109.jpg', 'jflinn'),
 (3, '9887e06812ef434d291e4936417d125cd594b38a.jpg', 'awdeorio'),
-(4, '2ec7cf8ae158b3b1f40065abfb33e81143707842.jpg', 'jag');
+(4, '2ec7cf8ae158b3b1f40065abfb33e81143707842.jpg', 'jag'),
+(5, 'ebb78094ac05e1fc8355a9316647e5eec6dbe2c2.jpg', 'awdeorio'),
+(6, 'a370e82001a533f8874f64adc18b58143004e0e4.jpg', 'jflinn'),
+(7, '8ce376b4c7854caf626674434d18b56fc31265ce.jpg', 'michjc'),
+(8, '805aabe8aad5cab254bdd9e14d74cd660f68e2cd.jpg', 'jflinn'),
+(9, 'e261436095a14f0d5c0d39d42a01b7d4b6cd16e6.jpg', 'awdeorio'),
+(10, '2ec7cf8ae158b3b1f40065abfb33e81143707842.jpg', 'jflinn');
 
 INSERT INTO following(username1, username2)
 VALUES ('awdeorio', 'jflinn'),
