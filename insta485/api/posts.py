@@ -24,21 +24,23 @@ def api_get_posts():
   if size <0 or page < 0:
     raise CustomError('Bad Request', 400)
   if lte != None:
+    print('here')
     try:
           cur = connection.execute(
-          "SELECT posts.postid \
+          "SELECT DISTINCT posts.postid \
           FROM posts \
-          INNER JOIN (SELECT DISTINCT username2 \
-              FROM following \
-              WHERE username1 = :user) AS f \
-          ON posts.owner = f.username2 OR posts.owner = :user\
-          WHERE posts.postid <= :lte \
+          WHERE ((posts.owner IN (SELECT username2 \
+                            FROM following \
+                            WHERE username1 = :user) \
+                  OR posts.owner = :user)\
+          AND posts.postid <= :lte )\
           ORDER BY posts.postid DESC \
           LIMIT :limit OFFSET :offset", {"lte": lte,
                                          "user": username,
                                          "limit": size,
                                          "offset": page * size }
           )
+          
           postid_fetch = cur.fetchall()
 
           if len(postid_fetch) < size:
@@ -51,14 +53,15 @@ def api_get_posts():
   else:
     try:
           cur = connection.execute(
-          "SELECT posts.postid \
+          "SELECT DISTINCT posts.postid \
           FROM posts \
-          INNER JOIN (SELECT DISTINCT username2 \
-              FROM following \
-              WHERE username1 = :user OR username2 = :user) AS f \
-          ON posts.owner = f.username2 \
+          WHERE (posts.owner IN (SELECT username2 \
+                            FROM following \
+                            WHERE username1 = :user) \
+                  OR posts.owner = :user)\
           ORDER BY posts.postid DESC \
-          LIMIT :limit OFFSET :offset", {"user": username,
+          LIMIT :limit OFFSET :offset", {
+                                         "user": username,
                                          "limit": size,
                                          "offset": page * size }
           )
@@ -71,12 +74,12 @@ def api_get_posts():
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e 
+        print('here')
   
   for p in postid_fetch:
     id = p['postid']
     p['url'] = '/api/v1/posts/' + str(id) + '/'
   
-  #get current quest path, might be a better way to do it
   insta485.model.close_db(error)
   if flask.request.args == {}:
     url = flask.request.path
