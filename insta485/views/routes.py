@@ -3,6 +3,7 @@ import insta485
 import sqlite3
 import uuid
 import arrow
+from dateutil import tz
 from insta485.views.util import *
 
 @insta485.app.route('/accounts/login/')
@@ -379,7 +380,7 @@ def post(postid_url_slug):
         print(f"{type(e)}, {e}")
         error = e
     insta485.model.close_db(error)
-    formated_time = arrow.get(post[0]["created"] + " EDT", 'YYYY-MM-DD HH:mm:ss ZZZ')
+    formated_time = arrow.get(post[0]["created"], 'YYYY-MM-DD HH:mm:ss', tzinfo=tz.tzlocal())
     timestamp = formated_time.humanize()
     context = {"postid": post[0]["postid"],
                "owner": post[0]["owner"],

@@ -28,6 +28,7 @@ session.json
 bundle.js
 *.js.map
 deployed_*
+temp/*
 
 # EECS 485 Project 4
 tmp
