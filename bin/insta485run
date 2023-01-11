@@ -7,10 +7,6 @@
 set -x
 
 FILE =var/insta485.sqlite3
-if test ! -f "$FILE" ;
-then
-    ./bin/insta485db reset
-fi
 
 export FLASK_ENV=development
 export FLASK_APP=insta485

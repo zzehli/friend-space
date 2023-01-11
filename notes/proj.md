@@ -28,3 +28,15 @@ I have implemented most of the functionalities of the main page with React. Seve
 
 ### Day 28 
 Learning react: despite the amont of tutorials online, the [official doc](https://reactjs.org/docs/hello-world.html) remains an execellent entry point to React. The structure of React can be intimidating at first. It's unclear how it fits the traditional HTML/CSS/JS structure. After reading the official doc, I find it easier to think about JSX as a templated language and the rest of React added functionalities to the templates. The problem with the doc is that it starts with setState and hooks are only introduced later. So it takes time to be able to read more recent React codes that use hooks.
+
+### Date x
+`moment.utc(created).fromNow()` This assumes the when server creates the DB, the server is on UTC. Since this piece of code is run on the local browser, `fromNow()` will be able to convert UTC to local time and calculate the time difference. In addition, when you test the code on local machine, it will say "4 hours ago" since even tho the DB is created just now, the browser still assumes that the DB is created at UTC time zone, which is 4 hours ago from ETS.
+
+### Reset procedure
+1. reset db
+`./bin/insta485db reset`
+2. start python venv at project root folder
+`source env/bin/activate`
+`echo $VIRTUAL_ENV`
+2. recompile
+`./bin/insta485run`
