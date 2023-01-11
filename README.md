@@ -14,3 +14,6 @@ If you choose to register a new user, the email formatting is not reinforced. On
 * Authentication system built from scratch with session cookies, the password stored in hashed form in db
 * Hosted on AWS EC2
 * Hand coded layout and CSS
+
+## Credits
+Photos from unsplash photographers: Documerica, Krisjanis Kazaks, Marek Piwnicki, Mat Napo, Sam Goodgame.
