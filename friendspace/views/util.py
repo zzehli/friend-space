@@ -1,4 +1,4 @@
-import insta485
+import friendspace
 import os
 import pathlib
 import uuid
@@ -13,7 +13,7 @@ def serialize_save(fileobj):
     stem = uuid.uuid4().hex
     suffix = pathlib.Path(filename).suffix
     uuid_basename = f"{stem}{suffix}"
-    path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
+    path = friendspace.app.config["UPLOAD_FOLDER"]/uuid_basename
     fileobj.save(path)
     return uuid_basename
 
@@ -29,14 +29,14 @@ def password_hash(salt, password):
     return "$".join([algorithm, salt, password_hash])
 
 def delete_image(filename):
-    file_path = insta485.app.config["UPLOAD_FOLDER"]/filename
+    file_path = friendspace.app.config["UPLOAD_FOLDER"]/filename
     os.remove(file_path)
 
 def query_user_following(user):
     """
     Query ppl the user is following, not including themselves, also their photos
     """
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
     cur = connection.execute(
         "SELECT users.username, users.filename \
         FROM users \
@@ -54,7 +54,7 @@ def query_user_post(user):
     """
     error = None
     try:
-        connection = insta485.model.get_db()
+        connection = friendspace.model.get_db()
         cur = connection.execute(
             "SELECT * \
                 FROM posts \
@@ -64,7 +64,7 @@ def query_user_post(user):
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     return posts
 
 def query_user_follower(user):
@@ -74,7 +74,7 @@ def query_user_follower(user):
     error = None
 
     try:
-        connection = insta485.model.get_db()
+        connection = friendspace.model.get_db()
         cur = connection.execute(
             "SELECT users.username, users.filename \
             FROM users \
@@ -88,5 +88,5 @@ def query_user_follower(user):
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     return users

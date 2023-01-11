@@ -1,16 +1,16 @@
 """REST API for posts."""
 import flask
-import insta485
+import friendspace
 import sqlite3
-from insta485.api.custom_error import CustomError
-from insta485.api.util import check_permission
+from friendspace.api.custom_error import CustomError
+from friendspace.api.util import check_permission
 
 #custom error handling
-@insta485.app.errorhandler(CustomError)
+@friendspace.app.errorhandler(CustomError)
 def invalid_credential(e):
   return flask.jsonify(e.to_dict()), e.status_code
 
-@insta485.app.route('/api/v1/posts/')
+@friendspace.app.route('/api/v1/posts/')
 def api_get_posts():
 
   #check permission/authentication
@@ -20,7 +20,7 @@ def api_get_posts():
   lte = flask.request.args.get('postid_lte')
   size = flask.request.args.get('size', default=10, type = int)
   page = flask.request.args.get('page', default=0, type = int)
-  connection = insta485.model.get_db()
+  connection = friendspace.model.get_db()
   if size <0 or page < 0:
     raise CustomError('Bad Request', 400)
   if lte != None:
@@ -80,7 +80,7 @@ def api_get_posts():
     id = p['postid']
     p['url'] = '/api/v1/posts/' + str(id) + '/'
   
-  insta485.model.close_db(error)
+  friendspace.model.close_db(error)
   if flask.request.args == {}:
     url = flask.request.path
   else:
@@ -92,13 +92,13 @@ def api_get_posts():
   }
   return flask.jsonify(**context)
 
-@insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
+@friendspace.app.route('/api/v1/posts/<int:postid_url_slug>/')
 def api_get_post_one(postid_url_slug):
   username = check_permission()
 
   error = None
   try:
-      connection = insta485.model.get_db()
+      connection = friendspace.model.get_db()
       #image
       cur = connection.execute(
           "SELECT postid, owner, u.userimage, p.filename, created \
@@ -140,7 +140,7 @@ def api_get_post_one(postid_url_slug):
   except sqlite3.Error as e:
       print(f"{type(e)}, {e}")
       error = e
-  insta485.model.close_db(error)
+  friendspace.model.close_db(error)
   if len(liked) > 0:
     like_detail = {"lognameLikesThis": True,
                   "numLikes": likes[0]['c'],
@@ -172,7 +172,7 @@ def api_get_post_one(postid_url_slug):
   }
   return flask.jsonify(**context)
 
-@insta485.app.route('/api/v1/')
+@friendspace.app.route('/api/v1/')
 def get_source():
   context = {
   "comments": "/api/v1/comments/",

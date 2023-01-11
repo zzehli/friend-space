@@ -1,15 +1,13 @@
 """
-Insta485 python package configuration.
-
-Andrew DeOrio <awdeorio@umich.edu>
+Friend Space python package configuration.
 """
 
 from setuptools import setup
 
 setup(
-    name='insta485',
+    name='friendspace',
     version='0.1.0',
-    packages=['insta485'],
+    packages=['friendspace'],
     include_package_data=True,
     install_requires=[
         'arrow',

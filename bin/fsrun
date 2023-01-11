@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#call insta485db create if no database
+#call fsdb create if no database
 #set FLASK_ENV and FLASK_APP
 #run the server
 
 set -x
 
-FILE =var/insta485.sqlite3
+FILE =var/friendspace.sqlite3
 
 export FLASK_ENV=development
-export FLASK_APP=insta485
+export FLASK_APP=friendspace
 flask run --host 0.0.0.0 --port 8000

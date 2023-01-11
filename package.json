@@ -1,9 +1,9 @@
 {
-  "name": "insta485",
+  "name": "friendspace",
   "version": "0.1.0",
-  "description": "insta485 front end",
-  "main": "insta485/js/main.jsx",
-  "author": "awdeorio",
+  "description": "friendspace front end",
+  "main": "friendspace/js/main.jsx",
+  "author": "jaeli",
   "license": "MIT",
   "repository": {},
   "devDependencies": {

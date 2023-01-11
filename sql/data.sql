@@ -1,7 +1,7 @@
 PRAGMA foreign_keys = ON;
 
 INSERT INTO users(username, fullname, email, filename, password)
-VALUES ('awd', 'Andrew Wasseman', 'awdeorio@aol.com',
+VALUES ('awd', 'Andrew Wasseman', 'awd@aol.com',
 'avatar-m1.png', 'sha512$46412293bb8745dd8ac8e3c0a06e9b0b$6a35e53dea1332930fb3e119353d9ef76061f5992dfedad9dd97ed275e373d6a5a8b14df87c9f9ec15bdc54a0c9922301d6668b8a4945e55debd4523ff1c521e'),
 ('jrl', 'Jeremy Lynn', 'rly@aol.com',
 'avatar-m2.png', 'sha512$46412293bb8745dd8ac8e3c0a06e9b0b$6a35e53dea1332930fb3e119353d9ef76061f5992dfedad9dd97ed275e373d6a5a8b14df87c9f9ec15bdc54a0c9922301d6668b8a4945e55debd4523ff1c521e'),

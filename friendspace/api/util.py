@@ -1,12 +1,12 @@
-import insta485
+import friendspace
 import os
 import pathlib
 import uuid
 import hashlib
 import flask
 import sqlite3
-from insta485.api.custom_error import CustomError
-from insta485.views import util
+from friendspace.api.custom_error import CustomError
+from friendspace.views import util
 
 def check_permission():
   """
@@ -22,7 +22,7 @@ def check_permission():
     error = None
     #image
     try:
-        connection = insta485.model.get_db()
+        connection = friendspace.model.get_db()
         cur = connection.execute(
             "SELECT password \
             FROM users \
@@ -34,7 +34,7 @@ def check_permission():
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     password_atempt = util.password_hash(pwd_fetch['password'].split('$')[1],password)
 
     if pwd_fetch['password'] != password_atempt:

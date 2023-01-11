@@ -1,14 +1,14 @@
 """REST API for likes."""
 import flask
-import insta485
+import friendspace
 import sqlite3
-from insta485.api.custom_error import CustomError
-from insta485.api.posts import check_permission
-# TODO name change and refractor to reflect its function
-@insta485.app.route('/api/v1/likes/<int:likeid>/', methods = ['DELETE'])
+from friendspace.api.custom_error import CustomError
+from friendspace.api.posts import check_permission
+
+@friendspace.app.route('/api/v1/likes/<int:likeid>/', methods = ['DELETE'])
 def api_get_like_one(likeid):
     username = check_permission()
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
     error = None
     try:
         cur = connection.execute(
@@ -29,14 +29,14 @@ def api_get_like_one(likeid):
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     return '', 204
 
-@insta485.app.route('/api/v1/likes/', methods = ['POST'])
+@friendspace.app.route('/api/v1/likes/', methods = ['POST'])
 def api_post_like():
     username = check_permission()
     postid = flask.request.args.get('postid')
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
 
     error = None
     try:
@@ -63,7 +63,7 @@ def api_post_like():
             raise CustomError('Post Nonexist', 403)
         print(f"{type(e)}, {e}")
         error = e 
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     context = {
         'likeid': likeid,
         'url': flask.url_for('api_get_like_one', likeid = likeid)

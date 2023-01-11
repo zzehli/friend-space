@@ -1,12 +1,12 @@
 import flask
-import insta485
+import friendspace
 import sqlite3
 import uuid
 import arrow
 from dateutil import tz
-from insta485.views.util import *
+from friendspace.views.util import *
 
-@insta485.app.route('/accounts/login/')
+@friendspace.app.route('/accounts/login/')
 def login():
     # error = None
     if 'user' in flask.session:
@@ -15,10 +15,10 @@ def login():
     return flask.render_template("login.html")
 
     
-@insta485.app.route('/accounts/', methods = ['POST'])
+@friendspace.app.route('/accounts/', methods = ['POST'])
 def account():
 
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
     error = None
 
    
@@ -193,7 +193,7 @@ def account():
             print(f"{type(e)}, {e}")
             error = e
 
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     url = flask.request.args.get('target')
     if url == None:
         return flask.redirect(flask.url_for('index'))
@@ -201,30 +201,30 @@ def account():
         return flask.redirect(url)
 
 
-@insta485.app.route('/accounts/logout/', methods = ['POST'])
+@friendspace.app.route('/accounts/logout/', methods = ['POST'])
 def logout():
     flask.session.pop('user', None)
     return flask.redirect(flask.url_for('login'))
 
-@insta485.app.route('/accounts/create/')
+@friendspace.app.route('/accounts/create/')
 def create_account():
     if 'user' in flask.session:
         return flask.redirect(flask.url_for('edit_account'))
     
     return flask.render_template('create_account.html')
 
-@insta485.app.route('/accounts/delete/')
+@friendspace.app.route('/accounts/delete/')
 def delete_account():
     if 'user' in flask.session:
         return flask.render_template('delete_account.html')
     return flask.redirect(flask.url_for('login'))
 
-@insta485.app.route('/accounts/edit/')
+@friendspace.app.route('/accounts/edit/')
 def edit_account():
     if 'user' in flask.session:
         error = None
         try:
-            connection = insta485.model.get_db()
+            connection = friendspace.model.get_db()
             cur = connection.execute(
                 "SELECT fullname, email, filename \
                 FROM users\
@@ -234,34 +234,34 @@ def edit_account():
 
         except sqlite3.Error as e:
             error = e
-        insta485.model.close_db(error)
+        friendspace.model.close_db(error)
         return flask.render_template('edit_account.html', **file)
     return flask.redirect(flask.url_for('login'))
 
-@insta485.app.route('/accounts/password/')
+@friendspace.app.route('/accounts/password/')
 def password():
     if 'user' in flask.session:
         return flask.render_template('password.html')
     return flask.redirect(flask.url_for('login'))
 
-@insta485.app.route('/')
+@friendspace.app.route('/')
 def index():
   if 'user' in flask.session:
 
     return flask.render_template("index.html")
   return flask.redirect(flask.url_for('login'))
 
-@insta485.app.route('/uploads/<path:file>')
+@friendspace.app.route('/uploads/<path:file>')
 def image(file):
     if 'user' in flask.session:
-        return flask.send_from_directory(insta485.app.config['UPLOAD_FOLDER'], file)
+        return flask.send_from_directory(friendspace.app.config['UPLOAD_FOLDER'], file)
     else:
         flask.abort(403)
 
-@insta485.app.route('/users/<user_url_slug>/')
+@friendspace.app.route('/users/<user_url_slug>/')
 def user(user_url_slug):
     #check url is valid against exiting users
-    cur = insta485.model.get_db().execute(
+    cur = friendspace.model.get_db().execute(
         "SELECT fullname \
             FROM users \
             WHERE username = (?)", (user_url_slug,)
@@ -286,7 +286,7 @@ def user(user_url_slug):
                "posts": own_post}
     return flask.render_template("user.html", **context)
 
-@insta485.app.route('/users/<user_url_slug>/followers/')
+@friendspace.app.route('/users/<user_url_slug>/followers/')
 def followers(user_url_slug):
     followers = query_user_follower(user_url_slug)
     loguser_following_list = query_user_following(flask.session['user'])
@@ -302,7 +302,7 @@ def followers(user_url_slug):
     return flask.render_template("followers.html", **context)
 
 
-@insta485.app.route('/users/<user_url_slug>/following/')
+@friendspace.app.route('/users/<user_url_slug>/following/')
 def following(user_url_slug):
     following = query_user_following(user_url_slug)
     loguser_following_list = query_user_following(flask.session['user'])
@@ -317,14 +317,14 @@ def following(user_url_slug):
                "logname": flask.session['user']}
     return flask.render_template("following.html", **context)
 
-@insta485.app.route('/posts/<postid_url_slug>/')
+@friendspace.app.route('/posts/<postid_url_slug>/')
 def post(postid_url_slug):
     if 'user' not in flask.session:
         return flask.redirect(flask.url_for('login'))
     error = None
     #image
     try:
-        connection = insta485.model.get_db()
+        connection = friendspace.model.get_db()
         cur = connection.execute(
             "SELECT postid, owner, u.userimage, p.filename, created \
              FROM posts p\
@@ -379,7 +379,7 @@ def post(postid_url_slug):
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     formated_time = arrow.get(post[0]["created"], 'YYYY-MM-DD HH:mm:ss', tzinfo=tz.tzlocal())
     timestamp = formated_time.humanize()
     context = {"postid": post[0]["postid"],
@@ -392,14 +392,14 @@ def post(postid_url_slug):
                "comments": comments}
     return flask.render_template("post.html", **context)
 
-@insta485.app.route("/explore/")
+@friendspace.app.route("/explore/")
 def explore():
     if 'user' not in flask.session:
         return flask.redirect(flask.url_for('login'))
     error = None
     #image
     try:
-        connection = insta485.model.get_db()
+        connection = friendspace.model.get_db()
         cur = connection.execute(
             "SELECT username, filename \
              FROM users"
@@ -408,7 +408,7 @@ def explore():
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
 
     # user_dict = {x['username']: x['filename'] for x in all}
 
@@ -422,7 +422,7 @@ def explore():
     context = {"not_following": discover}
     return flask.render_template("explore.html", **context)
 
-@insta485.app.route('/likes/', methods = ['POST'])
+@friendspace.app.route('/likes/', methods = ['POST'])
 def post_likes():
     if 'user' not in flask.session:
         return flask.redirect(flask.url_for('login'))
@@ -432,7 +432,7 @@ def post_likes():
     error = None
 
     
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
 
     if operation == 'like':
         try:
@@ -456,13 +456,13 @@ def post_likes():
             print(f"{type(e)}, {e}")
             error = e
 
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     if url == None:
         return flask.redirect(flask.url_for('index'))
     else:
         return flask.redirect(url)
 
-@insta485.app.route('/comments/', methods = ['POST'])
+@friendspace.app.route('/comments/', methods = ['POST'])
 def post_comments():
     if 'user' not in flask.session:
         return flask.redirect(flask.url_for('login'))
@@ -470,7 +470,7 @@ def post_comments():
     operation = flask.request.form['operation']
 
     error = None  
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
 
     if operation == 'create':
         postid = flask.request.form['postid']
@@ -500,20 +500,20 @@ def post_comments():
             print(f"{type(e)}, {e}")
             error = e 
     
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     if url == None:
         return flask.redirect(flask.url_for('index'))
     else:
         return flask.redirect(url)
 
-@insta485.app.route('/posts/', methods = ['POST'])
+@friendspace.app.route('/posts/', methods = ['POST'])
 def post_posts():
     if 'user' not in flask.session:
         return flask.redirect(flask.url_for('login'))
     operation = flask.request.form['operation']
 
     error = None  
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
 
     if operation == "create":
         file = flask.request.files['file']
@@ -544,13 +544,13 @@ def post_posts():
             error = e 
 
 
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     url = flask.request.args['target']
     if url == None:
         return flask.redirect('index')
     return flask.redirect(url)
 
-@insta485.app.route('/following/', methods = ['POST'])
+@friendspace.app.route('/following/', methods = ['POST'])
 def post_follow():
     if 'user' not in flask.session:
         return flask.redirect(flask.url_for('login'))
@@ -558,7 +558,7 @@ def post_follow():
     username = flask.request.form['username']
 
     error = None  
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
     if operation == 'follow':
         try:
             connection.execute(
@@ -583,7 +583,7 @@ def post_follow():
         except sqlite3.Error as e:
             print(f"{type(e)}, {e}")
             error = e 
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     url = flask.request.args['target']
     if url == None:
         return flask.redirect('index')

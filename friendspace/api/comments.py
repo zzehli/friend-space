@@ -1,14 +1,14 @@
 """REST API for comments."""
 import flask
-import insta485
+import friendspace
 import sqlite3
-from insta485.api.custom_error import CustomError
-from insta485.api.posts import check_permission
+from friendspace.api.custom_error import CustomError
+from friendspace.api.posts import check_permission
 
-@insta485.app.route('/api/v1/comments/<int:commentid>/', methods = ['DELETE'])
+@friendspace.app.route('/api/v1/comments/<int:commentid>/', methods = ['DELETE'])
 def api_get_comment_one(commentid):
     username = check_permission()
-    connection = insta485.model.get_db()
+    connection = friendspace.model.get_db()
     error = None
     try:
         cur = connection.execute(
@@ -29,10 +29,10 @@ def api_get_comment_one(commentid):
     except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-    insta485.model.close_db(error)
+    friendspace.model.close_db(error)
     return '', 204 
 
-@insta485.app.route('/api/v1/comments/', methods = ['POST'])
+@friendspace.app.route('/api/v1/comments/', methods = ['POST'])
 def api_post_comment():
   postid = flask.request.args.get('postid')
   text = flask.request.json.get('text')
@@ -40,7 +40,7 @@ def api_post_comment():
   if text == '':
     raise CustomError('No empty comment allowed', 403)
   username = check_permission()
-  connection = insta485.model.get_db()
+  connection = friendspace.model.get_db()
   error = None
   try:
     cur = connection.execute(
@@ -54,7 +54,7 @@ def api_post_comment():
   except sqlite3.Error as e:
         print(f"{type(e)}, {e}")
         error = e
-  insta485.model.close_db(error)
+  friendspace.model.close_db(error)
   context = {
     "commentid": commentid,
     "lognameOwnsThis": True,

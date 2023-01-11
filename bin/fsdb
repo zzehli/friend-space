@@ -1,5 +1,5 @@
 #!/bin/bash
-# insta485db
+# friendspacedb
 # Stop on errors
 # See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
 set -Eeuo pipefail
@@ -15,25 +15,23 @@ fi
 # Parse argument.  $1 is the first argument
 case $1 in
   "create")
-    mkdir -p var/uploads
-    sqlite3 var/insta485.sqlite3 < sql/schema.sql
-    sqlite3 var/insta485.sqlite3 < sql/data.sql
+    sqlite3 var/friendspace.sqlite3 < sql/schema.sql
+    sqlite3 var/friendspace.sqlite3 < sql/data.sql
     ;;
   "destroy")
-    rm -rf var/insta485.sqlite3 var/uploads
+    rm -rf var/friendspace.sqlite3
     ;;
   "reset")
-    rm -rf var/insta485.sqlite3
-    mkdir -p var/uploads
-    sqlite3 var/insta485.sqlite3 < sql/schema.sql
-    sqlite3 var/insta485.sqlite3 < sql/data.sql
+    rm -rf var/friendspace.sqlite3
+    sqlite3 var/friendspace.sqlite3 < sql/schema.sql
+    sqlite3 var/friendspace.sqlite3 < sql/data.sql
     ;;
   "dump")
-    sqlite3 -batch -line var/insta485.sqlite3 'SELECT * FROM comments'
-    sqlite3 -batch -line var/insta485.sqlite3 'SELECT * FROM following'
-    sqlite3 -batch -line var/insta485.sqlite3 'SELECT * FROM likes'
-    sqlite3 -batch -line var/insta485.sqlite3 'SELECT * FROM posts'
-    sqlite3 -batch -line var/insta485.sqlite3 'SELECT * FROM users'
+    sqlite3 -batch -line var/friendspace.sqlite3 'SELECT * FROM comments'
+    sqlite3 -batch -line var/friendspace.sqlite3 'SELECT * FROM following'
+    sqlite3 -batch -line var/friendspace.sqlite3 'SELECT * FROM likes'
+    sqlite3 -batch -line var/friendspace.sqlite3 'SELECT * FROM posts'
+    sqlite3 -batch -line var/friendspace.sqlite3 'SELECT * FROM users'
     ;;
   "random")
       SHUF=shuf
@@ -41,7 +39,7 @@ case $1 in
     if ! type shuf 2> /dev/null; then
       SHUF=gshuf
     fi
-    DB_FILENAME=var/insta485.sqlite3
+    DB_FILENAME=var/friendspace.sqlite3
     FILENAMES="cameron-webber-ElS12fggAjs-unsplash.jpg
               documerica-cu8n4bHkcoI-unsplash.jpg
               peter-burdon-hz15RZZphpo-unsplash.jpg
@@ -52,7 +50,7 @@ case $1 in
       # awk '{$1=$1;print}'  trim leading and trailing whitespace
       # Use '${SHUF}' instead of 'shuf'
       FILENAME=`echo "$FILENAMES" | ${SHUF} -n1 | awk '{$1=$1;print}'`
-      OWNER="awdeorio"
+      OWNER="awd"
       sqlite3 -echo -batch ${DB_FILENAME} "INSERT INTO posts(filename, owner) VALUES('${FILENAME}','${OWNER}');"
     done
     ;;

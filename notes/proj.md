@@ -34,9 +34,9 @@ Learning react: despite the amont of tutorials online, the [official doc](https:
 
 ### Reset procedure
 1. reset db
-`./bin/insta485db reset`
+`./bin/fsdb reset`
 2. start python venv at project root folder
 `source env/bin/activate`
 `echo $VIRTUAL_ENV`
 2. recompile
-`./bin/insta485run`
+`./bin/fsrun`
