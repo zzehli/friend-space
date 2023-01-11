@@ -31,6 +31,7 @@ bundle.js
 *node_modules*
 files_for_autograder_io/
 */var/*
+friendspace/static/js/*
 
 # Virtual Machines
 .vagrant/
