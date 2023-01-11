@@ -6,10 +6,6 @@ share, comment and like photos, follow friends, and discover other users.
 ## Website
 http://ec2-3-19-239-29.us-east-2.compute.amazonaws.com/
 
-To browse the content, sign up for a new user account. Or use a pre-existing user login:  
-user: `awd`  
-passcode: `password`
-
 If you choose to register a new user, the email formatting is not reinforced. Once you log in, your homepage, which shows yours and posts from users you follow, will be empty. You can either click your username on the top right corner to enter your user page and create new posts, or you can click the `explore` button on the top right corner to see all the users you have not followed in the app and follow them.
 
 ## Features
