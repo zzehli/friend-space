@@ -182,7 +182,7 @@ class Post extends React.Component {
             <img src={ownerImgUrl}/>
             <p>{owner}</p>
         </a>
-        <a className = "timestamp" href = {postShowUrl}>{moment.utc(created).fromNow()}</a>
+        <a className = "timestamp" href = {postShowUrl}>{moment(created, moment.ISO_8601).local(true).fromNow()}</a>
         </div>
         <img src={imgUrl}  onClick={(e) => this.handleClickLike(e, this.state.likes.lognameLikesThis)}/>
         <div className="cardComments">
